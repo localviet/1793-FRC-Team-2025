@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
   private RobotContainer m_RobotContainer = new RobotContainer();
   private DriveSubsystem m_DriveSubsystem = m_RobotContainer.getDriveSysten();
   private final ShuffleboardTab tab = Shuffleboard.getTab("Controller Data"); //make tab
-
+  private final XboxController controller = m_RobotContainer.getController();
 
   //ENTRIES
   /**
@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    XboxController controller = m_RobotContainer.getController();
+    
 
     tab.addNumber("Front Left Encoder", () -> m_DriveSubsystem.getFrontLeftEncoder());
     tab.addNumber("Front Right Encoder", () -> m_DriveSubsystem.getFrontRightEncoder());

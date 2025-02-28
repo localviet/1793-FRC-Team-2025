@@ -18,12 +18,15 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 //wrong gyro:
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 //new gyro:
-import com.kauailabs.navx.frc.AHRS;
+//import com.studica.frc.AHRS;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
+
 import edu.wpi.first.wpilibj.SPI;
-
-
+import edu.wpi.first.wpilibj.SerialPort;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -72,12 +75,12 @@ public class DriveSubsystem extends SubsystemBase {
 
 
   // The gyro sensor
-  private final AHRS m_gyro = new AHRS(SPI.Port.kMXP); // use SPI>kMXP for roboRIO MXP port
+  private final AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI); //SPI.Port.kMXP
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
-      Rotation2d.fromDegrees(m_gyro.getAngle()),
+      Rotation2d.fromDegrees(-m_gyro.getAngle()),
       new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -95,7 +98,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // Update the odometry in the periodic block
     m_odometry.update(
-        Rotation2d.fromDegrees(Math.IEEEremainder(m_gyro.getAngle(), 360)),
+        Rotation2d.fromDegrees(Math.IEEEremainder(-m_gyro.getAngle(), 360)),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -120,7 +123,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(
-        Rotation2d.fromDegrees(Math.IEEEremainder(m_gyro.getAngle(), 360)),
+        Rotation2d.fromDegrees(Math.IEEEremainder(-m_gyro.getAngle(), 360)),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -148,7 +151,7 @@ public class DriveSubsystem extends SubsystemBase {
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, 
-                Rotation2d.fromDegrees(Math.IEEEremainder(m_gyro.getAngle(), 360)))
+                Rotation2d.fromDegrees(Math.IEEEremainder(-m_gyro.getAngle(), 360)))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
 //fancy if statement |  condition ? value_if_true : value_if_false;
     SwerveDriveKinematics.desaturateWheelSpeeds(
