@@ -42,8 +42,10 @@ public class MAXSwerveModule {
   public MAXSwerveModule(int drivingCANId, int turningCANId, double chassisAngularOffset) {
     System.out.println("Initializing MAXSwerveModule with CAN IDs: " 
     + drivingCANId + " (driving), " + turningCANId + " (turning)");
+
     m_drivingSpark = new SparkMax(drivingCANId, MotorType.kBrushless);
     System.out.println("Driving CAN made [" + drivingCANId + "]  Firmware Version: " + m_drivingSpark.getFirmwareVersion());
+   
     m_turningSpark = new SparkMax(turningCANId, MotorType.kBrushless);
     System.out.println("Turning CAN made [" + turningCANId + "]  Firmware Version: " + m_turningSpark.getFirmwareVersion());
     m_drivingEncoder = m_drivingSpark.getEncoder();

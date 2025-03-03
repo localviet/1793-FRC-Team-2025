@@ -20,17 +20,26 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import java.util.List;
 
 //shuffle board type
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;//visualize data ig
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
+//limelight libraries
+import frc.robot.subsystems.Limelight;
+
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -41,7 +50,13 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+
+  private final Limelight m_limelight = new Limelight();  // Limelight subsystem
+  //Limelight proportional constants, modify these to tune robot turning
+  private final double KpHorizontal = 0.1;  // Proportional control constant for horizontal movement (tx)
+  private final double KpVertical = 0.1;  // Proportional control constant for vertical movement (ty)
 
   private boolean fieldOriented = true;
   // The driver's controller
@@ -70,6 +85,7 @@ public class RobotContainer {
 
     autoChooser.setDefaultOption("Swerve Auto", swerveAutoCommand());
     autoChooser.addOption("Simple Command", getAutonomousCommand());
+    autoChooser.addOption("Limelight Autonomous", limelightAutoCommand());  
 
   }
 
@@ -88,8 +104,15 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    new JoystickButton(m_driverController, XboxController.Button.kA.value)
+    new JoystickButton(m_driverController, XboxController.Button.kX.value)
         .onTrue(new InstantCommand(() -> fieldOriented = !fieldOriented));
+
+    new JoystickButton(m_driverController, XboxController.Button.kA.value)
+        .onTrue(new InstantCommand(() -> m_elevator.setGoal(1.0).schedule()));
+
+    new JoystickButton(m_driverController, XboxController.Button.kB.value)
+        .onTrue(new InstantCommand(() -> m_elevator.setGoal(2.0).schedule()));
+      
   }
 
   public XboxController getController(){
@@ -146,6 +169,35 @@ public class RobotContainer {
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
   }
 
+
+  //Limelight code IMPORTANT IF NO TARGET IS VISIBLE, STOPS ROBOT
+  public Command limelightAutoCommand() {
+    return new RunCommand(() -> {
+      // Limelight data from the LimelightSubsystem
+      double tx = m_limelight.getXOffset();  // Horizontal offset
+      double ty = m_limelight.getYOffset();  // Vertical offset
+      boolean targetVisible = m_limelight.hasValidTargets();  // Target visibility
+
+      // If target is visible, adjust the robot's position
+      if (targetVisible) {
+        double steeringAdjust = KpHorizontal * tx;  // Steering correction based on horizontal offset (tx)
+        double elevationAdjust = KpVertical * ty;  // Elevation correction based on vertical offset (ty)
+
+          if (Math.abs(tx) < 1.0 && Math.abs(ty) < 1.0) {
+           // If the robot is close to the tag, stop and complete an action
+            m_robotDrive.drive(0, 0, 0, false);  // Stop the robot
+            // coralShoot.activate();  // Incorporate shooting here
+        } else {
+          // Otherwise, keep moving toward the target
+          m_robotDrive.drive(steeringAdjust, elevationAdjust, 0, false);  // Move towards target
+        }
+
+      } else {
+        // If no target is visible, stop the robot
+        m_robotDrive.drive(0, 0, 0, false);
+      }
+    }, m_robotDrive);
+  }
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
