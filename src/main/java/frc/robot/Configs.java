@@ -4,6 +4,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ModuleConstants;
 
 public final class Configs {
@@ -53,4 +54,22 @@ public final class Configs {
                     .positionWrappingInputRange(0, turningFactor);
         }
     }
+
+
+    public static final class Elevator {
+        public static final SparkMaxConfig elevatorConfig = new SparkMaxConfig();
+
+        static {
+            // Define the PID configuration for the elevator motor
+            elevatorConfig
+                    .idleMode(IdleMode.kBrake)
+                    .smartCurrentLimit(40)
+                    .openLoopRampRate(ElevatorConstants.kElevatorRampRate);
+            elevatorConfig.closedLoop
+                    .pid(ElevatorConstants.kElevatorKp, ElevatorConstants.kElevatorKi, ElevatorConstants.kElevatorKd)
+                    .velocityFF(ElevatorConstants.kElevatorkG) // Feedforward term
+                    .outputRange(-7, 7);
+        }
+    }
+
 }
