@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.BargeSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,6 +53,9 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+  private final BargeSubsystem m_BargeSubsystem = new BargeSubsystem();
+  private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
+
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   private final Limelight m_limelight = new Limelight();  // Limelight subsystem
@@ -61,7 +66,8 @@ public class RobotContainer {
   private boolean fieldOriented = true;
   // The driver's controller
   private XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-
+  private XboxController m_grabberController = new XboxController(1);
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -81,6 +87,12 @@ public class RobotContainer {
                 fieldOriented),
             m_robotDrive));
 
+    m_driverController.getLeftY(); // Get Y-axis input for arm control
+
+    // Bind the command to the Y-axis of the joystick
+    m_ArmSubsystem.setDefaultCommand(
+        new RunCommand(() -> m_ArmSubsystem.controlArm(m_grabberController.getLeftY()), m_ArmSubsystem)
+    );
     //set commands
 
     autoChooser.setDefaultOption("Swerve Auto", swerveAutoCommand());
@@ -112,6 +124,10 @@ public class RobotContainer {
 
     new JoystickButton(m_driverController, XboxController.Button.kB.value)
         .onTrue(new InstantCommand(() -> m_elevator.setGoal(2.0).schedule()));
+
+        new JoystickButton(m_driverController, XboxController.Button.kY.value)
+        .onTrue(new InstantCommand(() -> m_BargeSubsystem.toggleClamp()));
+
       
   }
 
@@ -122,6 +138,15 @@ public class RobotContainer {
   public DriveSubsystem getDriveSysten(){
     return m_robotDrive;
   }
+
+  public ElevatorSubsystem getElevatorSubsystem(){
+    return m_elevator;
+  }
+
+  public BargeSubsystem getBargeSubsystem() {
+    return m_BargeSubsystem;
+  }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

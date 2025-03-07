@@ -15,7 +15,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.BargeSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard; 
 import edu.wpi.first.wpilibj.Encoder;
 
@@ -34,7 +36,10 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_RobotContainer = new RobotContainer();
   private DriveSubsystem m_DriveSubsystem = m_RobotContainer.getDriveSysten();
+  private BargeSubsystem m_BargeSubsystem = m_RobotContainer.getBargeSubsystem();
+  private ElevatorSubsystem m_ElevatorSubsystem = m_RobotContainer.getElevatorSubsystem();
   private final ShuffleboardTab tab = Shuffleboard.getTab("Controller Data"); //make tab
+  private final ShuffleboardTab elevatorTab = Shuffleboard.getTab("Elevator Debug");
   private final XboxController controller = m_RobotContainer.getController();
 
   //ENTRIES
@@ -52,9 +57,11 @@ public class Robot extends TimedRobot {
     tab.addNumber("Front Right Encoder", () -> m_DriveSubsystem.getFrontRightEncoder());
     tab.addNumber("Back Left Encoder", () -> m_DriveSubsystem.getBackLeftEncoder());
     tab.addNumber("Back Right Encoder", () -> m_DriveSubsystem.getBackRightEncoder());
-    tab.addNumber("Controller value", () -> m_DriveSubsystem.getBackRightEncoder());
+    tab.addNumber("Barge Encoder", () -> m_BargeSubsystem.getEncoderVal());
 
     tab.addNumber("Right X value", () -> controller.getRightX());
+
+    elevatorTab.addNumber("Elevator Height (m)", () -> m_ElevatorSubsystem.getPositionMeters());
 
   }
 

@@ -16,21 +16,9 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
-import edu.wpi.first.wpilibj.simulation.DIOSim;
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Configs;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 //import frc.robot.Constants.AlgaeArmConstants;
@@ -46,47 +34,20 @@ public class ElevatorSubsystem extends SubsystemBase {
     //setUp
 
     private final SparkMax m_motor = new SparkMax(5, SparkLowLevel.MotorType.kBrushless);
- 
     private final RelativeEncoder m_encoder = m_motor.getEncoder();
     private final ElevatorFeedforward m_feedForward = new ElevatorFeedforward(ElevatorConstants.kElevatorkS,
             ElevatorConstants.kElevatorkG,
             ElevatorConstants.kElevatorkV,
             ElevatorConstants.kElevatorkA);
-    // Sensors
-    /*    private final LaserCan m_elevatorLaserCan = new LaserCan(0);
-    private final LaserCanSim m_elevatorLaserCanSim = new LaserCanSim(0);
-    private final RegionOfInterest m_laserCanROI = new RegionOfInterest(0, 0, 16, 16);
-    private final TimingBudget m_laserCanTimingBudget = TimingBudget.TIMING_BUDGET_20MS;
-     * 
-     */
+     
+    private final SparkMaxConfig config = Configs.Elevator.elevatorConfig;
 
-    private final Alert m_laserCanFailure = new Alert("LaserCAN failed to configure.",
-            AlertType.kError);
-    private final DigitalInput m_limitSwitchLow = new DigitalInput(9);
-    private DIOSim m_limitSwitchLowSim = null;
+    //private final DigitalInput m_limitSwitchLow = new DigitalInput(9); //do we have limit switch?
 
-
-    public static Distance convertRotationsToDistance(Angle rotations){
-      return Meters.of(rotations.in(Rotations) *
-              (2 * Math.PI * ElevatorConstants.kElevatorDrumRadius) / ElevatorConstants.kElevatorGearing);
-    }
-
-    public static Angle convertDistanceToRotations(Distance distance){
-      return Rotations.of(distance.in(Meters) /
-              (2 * Math.PI * ElevatorConstants.kElevatorDrumRadius) * ElevatorConstants.kElevatorGearing);
-    }
 
 
     public ElevatorSubsystem() {
-        SparkMaxConfig config = new SparkMaxConfig();
-        config.smartCurrentLimit(40)
-                .openLoopRampRate(ElevatorConstants.kElevatorRampRate);
-        
-        m_motor.configure(config, SparkBase.ResetMode.kNoResetSafeParameters, SparkBase.PersistMode.kPersistParameters);//
-
-
-
-
+        m_motor.configure(config, SparkBase.ResetMode.kNoResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
     }
 
 
@@ -102,13 +63,22 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void reachGoal(double goal){
-        double voltsOutput = MathUtil.clamp(
-                m_feedForward.calculateWithVelocities(getVelocityMetersPerSecond(), m_controller.getSetpoint().velocity)
-                + m_controller.calculate(getPositionMeters(), goal),
-                -7,
-                7);
+
+
+        double error = goal - getPositionMeters(); // Distance error
+        double kP = 1.0; // Tune this for better control
+        double output = kP * error;
+    
+        // Feedforward for gravity/friction compensation, thats it
+        double feedForwardVolts = m_feedForward.calculateWithVelocities(getVelocityMetersPerSecond(), 0);
+        
+        // Combine control output and feedforward, then clamp voltage
+        double voltsOutput = MathUtil.clamp(output + feedForwardVolts, -7, 7);
+        
         m_motor.setVoltage(voltsOutput);
+
     }
+    
 
     public Command setGoal(double goal){
         return run(() -> reachGoal(goal));

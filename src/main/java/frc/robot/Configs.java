@@ -21,7 +21,7 @@ public final class Configs {
 
             drivingConfig
                     .idleMode(IdleMode.kBrake)
-                    .smartCurrentLimit(50);
+                    .smartCurrentLimit(45); //40-45
             drivingConfig.encoder
                     .positionConversionFactor(drivingFactor) // meters
                     .velocityConversionFactor(drivingFactor / 60.0); // meters per second
@@ -34,7 +34,7 @@ public final class Configs {
 
             turningConfig
                     .idleMode(IdleMode.kBrake)
-                    .smartCurrentLimit(20);
+                    .smartCurrentLimit(20); //20-30
             turningConfig.absoluteEncoder
                     // Invert the turning encoder, since the output shaft rotates in the opposite
                     // direction of the steering motor in the MAXSwerve Module.
@@ -72,4 +72,37 @@ public final class Configs {
         }
     }
 
+    public static final class Barge {
+        public static final SparkMaxConfig bargeConfig = new SparkMaxConfig();
+
+        static {
+                // Define the PID configuration for the elevator motor
+                bargeConfig
+                        .idleMode(IdleMode.kBrake)
+                        .smartCurrentLimit(40);
+                bargeConfig.closedLoop
+                        .pid(ElevatorConstants.kElevatorKp, ElevatorConstants.kElevatorKi, ElevatorConstants.kElevatorKd)
+                        .velocityFF(ElevatorConstants.kElevatorkG) // Feedforward term
+                        .outputRange(-12, 12);
+            }
+        }
+
+    public static final class Arm {
+        public static final SparkMaxConfig armConfig = new SparkMaxConfig();
+
+        static {
+                // Define the PID configuration for the elevator motor
+                armConfig
+                        .idleMode(IdleMode.kBrake)
+                        .smartCurrentLimit(40)
+                        .openLoopRampRate(ElevatorConstants.kElevatorRampRate);
+                armConfig.closedLoop
+                        .pid(.5, ElevatorConstants.kElevatorKi, ElevatorConstants.kElevatorKd)
+                        .velocityFF(ElevatorConstants.kElevatorkG) // Feedforward term
+                        .outputRange(-12, 12);
+        }
+    }
+
 }
+
+

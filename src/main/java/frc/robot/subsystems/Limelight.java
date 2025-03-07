@@ -61,6 +61,10 @@ public class Limelight extends SubsystemBase {
     }
 
 
+
+    //You can make a method that can set the arena as a array and code the apriltags as certain coordinates in 
+    //The arena and how to view them for better pathfinds. Make sure the gyro is calibrated firsthand so we can
+    //make sure the robot pathfinding is optimal. Can be used for path looping in autonomous mode with limelight.
    
 }
 
