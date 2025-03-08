@@ -65,7 +65,7 @@ public class BargeSubsystem extends SubsystemBase{
         return (m_encoder.getPosition() / gearRatio) * (2 * Math.PI * winchRadius);
     }
     public void reachGoal(double goal) {
-        // Get current position
+        // Get current position type
         double currentOffset = m_encoder.getPosition(); 
         
         // Calculate error (how far we are from the target)

@@ -105,7 +105,7 @@ public final class Constants {
   }
 
     public static class ElevatorConstants {
-    public static final double kElevatorKp = 1;//5
+    public static final double kElevatorKp = 5;//5
     public static final double kElevatorKi = 0;
     public static final double kElevatorKd = 0;//
     public static final double kMaxVelocity = Meters.of(4).per(Second).in(MetersPerSecond);
@@ -117,13 +117,13 @@ public final class Constants {
     public static final double kElevatorRampRate = 0.1;
     public static final double kElevatorGearing = 12.0; // gear is Drum Teeth / Motor Teeth || pully is diameter of Drum / dia of Motor
     public static final double kElevatorCarriageMass = 4.0;
-    public static final double kElevatorDrumRadius = Units.inchesToMeters(2.0); //radius of elevator gear
-    public static final double kElevatorMinHeightMeters = 0.0; //CHANGE THESE min height is from reference point to bottom of elevator
-    public static final double kElevatorMaxHeightMeters = 10.25; // max is from reference to the top of the elevator
-    public static final double kElevatorLength = Inches.of(33).in(Meters); //from bottom to very top
+    public static final double kElevatorDrumRadius = 0.05; //radius of elevator gear 5cm
+    public static final double kElevatorMinHeightMeters = 0.155; //CHANGE THESE min height is from reference point to bottom of elevator
+    public static final double kElevatorMaxHeightMeters = 1.59; // max is from reference to the top of the elevator
+    public static final double kElevatorLength = Inches.of(62.6).in(Meters); //from bottom to very top
     public static final Distance kElevatorStartingHeightSim = Meters.of(0.0);
     public static final Angle kElevatorStartingAngle = Degrees.of(-90);
-    public static final Distance kLaserCANOffset          = Inches.of(3);
+    public static final Distance kLaserCANOffset  = Inches.of(3);
     public static final double kElevatorDefaultTolerance = Inches.of(1).in(Meters);
 
     public static double kLowerToScoreHeight =  Units.inchesToMeters(6);;

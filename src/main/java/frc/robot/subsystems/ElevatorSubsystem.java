@@ -66,14 +66,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 
         double error = goal - getPositionMeters(); // Distance error
-        double kP = 1.0; // Tune this for better control
+        double kP = Constants.ElevatorConstants.kElevatorKp; // Tune this for better control
         double output = kP * error;
     
         // Feedforward for gravity/friction compensation, thats it
         double feedForwardVolts = m_feedForward.calculateWithVelocities(getVelocityMetersPerSecond(), 0);
         
         // Combine control output and feedforward, then clamp voltage
-        double voltsOutput = MathUtil.clamp(output + feedForwardVolts, -7, 7);
+        double voltsOutput = MathUtil.clamp(output + feedForwardVolts, -12, 12);
         
         m_motor.setVoltage(voltsOutput);
 

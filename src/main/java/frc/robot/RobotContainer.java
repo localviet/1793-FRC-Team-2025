@@ -23,10 +23,12 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.BargeSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -55,6 +57,7 @@ public class RobotContainer {
   private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
   private final BargeSubsystem m_BargeSubsystem = new BargeSubsystem();
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
+  private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
 
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
@@ -120,15 +123,33 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> fieldOriented = !fieldOriented));
 
     new JoystickButton(m_driverController, XboxController.Button.kA.value)
-        .onTrue(new InstantCommand(() -> m_elevator.setGoal(1.0).schedule()));
+        .onTrue(new InstantCommand(() -> m_elevator.setElevatorHeight(0.2).schedule()));
 
     new JoystickButton(m_driverController, XboxController.Button.kB.value)
-        .onTrue(new InstantCommand(() -> m_elevator.setGoal(2.0).schedule()));
+        .onTrue(new InstantCommand(() -> m_elevator.setElevatorHeight(1.5).schedule()));
 
-        new JoystickButton(m_driverController, XboxController.Button.kY.value)
-        .onTrue(new InstantCommand(() -> m_BargeSubsystem.toggleClamp()));
+    new JoystickButton(m_driverController, XboxController.Button.kY.value)
+    .onTrue(new InstantCommand(() -> m_BargeSubsystem.toggleClamp()));
+/*
+ *     new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.1)
+        .whileTrue(new InstantCommand(() -> m_IntakeSubsystem.shoot(true)));
 
-      
+    new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.1)
+        .whileTrue(new InstantCommand(() -> m_IntakeSubsystem.shoot(false)));
+ */
+    new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.1)
+    .whileTrue(new StartEndCommand(
+        () -> m_IntakeSubsystem.shoot(true),  // Start when pressed
+        () -> m_IntakeSubsystem.stop(),       // Stop when released
+        m_IntakeSubsystem                     // Subsystem requirement
+    ));
+
+  new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.1)
+      .whileTrue(new StartEndCommand(
+          () -> m_IntakeSubsystem.shoot(false), 
+          () -> m_IntakeSubsystem.stop(), 
+          m_IntakeSubsystem
+      ));
   }
 
   public XboxController getController(){
@@ -145,6 +166,10 @@ public class RobotContainer {
 
   public BargeSubsystem getBargeSubsystem() {
     return m_BargeSubsystem;
+  }
+
+  public ArmSubsystem getArmSubsystem() {
+    return m_ArmSubsystem;
   }
 
 
