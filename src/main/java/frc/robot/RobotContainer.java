@@ -66,7 +66,7 @@ public class RobotContainer {
   private final double KpHorizontal = 0.1;  // Proportional control constant for horizontal movement (tx)
   private final double KpVertical = 0.1;  // Proportional control constant for vertical movement (ty)
 
-  private boolean fieldOriented = true;
+  private boolean fieldOriented = false;
   // The driver's controller
   private XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   private XboxController m_grabberController = new XboxController(1);
@@ -114,6 +114,7 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+    //driver mappings
     new JoystickButton(m_driverController, Button.kR1.value)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
@@ -122,21 +123,60 @@ public class RobotContainer {
     new JoystickButton(m_driverController, XboxController.Button.kX.value)
         .onTrue(new InstantCommand(() -> fieldOriented = !fieldOriented));
 
-    new JoystickButton(m_driverController, XboxController.Button.kA.value)
-        .onTrue(new InstantCommand(() -> m_elevator.setElevatorHeight(0.2).schedule()));
-
-    new JoystickButton(m_driverController, XboxController.Button.kB.value)
-        .onTrue(new InstantCommand(() -> m_elevator.setElevatorHeight(1.5).schedule()));
-
     new JoystickButton(m_driverController, XboxController.Button.kY.value)
-    .onTrue(new InstantCommand(() -> m_BargeSubsystem.toggleClamp()));
+        .onTrue(new InstantCommand(() -> m_BargeSubsystem.toggleClamp()));
+
+    //grabber mappings
+    new JoystickButton(m_grabberController, XboxController.Button.kA.value)
+        .onTrue(new InstantCommand(() -> m_elevator.setElevatorHeight(0.0).schedule()));
+
+    new JoystickButton(m_grabberController, XboxController.Button.kX.value)
+        .onTrue(new InstantCommand(() -> m_elevator.setElevatorHeight(0.0).schedule()));
+
+    new JoystickButton(m_grabberController, XboxController.Button.kY.value)
+        .onTrue(new InstantCommand(() -> m_elevator.setElevatorHeight(.6457).schedule()));
+
+    new JoystickButton(m_grabberController, XboxController.Button.kB.value)
+        .onTrue(new InstantCommand(() -> m_elevator.setElevatorHeight(0.7186).schedule()));
+
+
 /*
- *     new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.1)
+ *     new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.2)
         .whileTrue(new InstantCommand(() -> m_IntakeSubsystem.shoot(true)));
 
-    new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.1)
+    new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
         .whileTrue(new InstantCommand(() -> m_IntakeSubsystem.shoot(false)));
  */
+
+
+ /*
+  * possible arm code 
+
+    if(){
+    
+    } else if(){
+    
+   }
+  */
+new Trigger(() -> m_grabberController.getLeftTriggerAxis() > 0.2)
+.whileTrue(new InstantCommand(() -> m_IntakeSubsystem.shoot(1)));
+
+new Trigger(() -> m_grabberController.getRightTriggerAxis() > 0.2)
+.whileTrue(new InstantCommand(() -> m_IntakeSubsystem.shoot(2)));
+
+new Trigger(() -> m_grabberController.getRightTriggerAxis() < 0.2 && m_grabberController.getLeftTriggerAxis() < 0.2)
+.onTrue(new InstantCommand(() -> m_IntakeSubsystem.shoot(3)));
+
+/*
+ *     new Trigger(() -> )
+        .whileTrue(new InstantCommand(() -> m_IntakeSubsystem.stop()));
+ */
+
+
+
+
+
+/* 
     new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.1)
     .whileTrue(new StartEndCommand(
         () -> m_IntakeSubsystem.shoot(true),  // Start when pressed
@@ -150,6 +190,7 @@ public class RobotContainer {
           () -> m_IntakeSubsystem.stop(), 
           m_IntakeSubsystem
       ));
+      */
   }
 
   public XboxController getController(){

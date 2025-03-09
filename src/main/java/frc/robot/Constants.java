@@ -29,7 +29,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 1; //4.8 before
+    public static final double kMaxSpeedMetersPerSecond = 4; //4.8 before
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     // Chassis configuration
@@ -44,10 +44,10 @@ public final class Constants {
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
     // Angular offsets of the modules relative to the chassis in radians
-    public static final double kFrontLeftChassisAngularOffset = 5.186;
-    public static final double kFrontRightChassisAngularOffset = 4.101;
-    public static final double kBackLeftChassisAngularOffset = 3.973;
-    public static final double kBackRightChassisAngularOffset = 5.431;
+    public static final double kFrontLeftChassisAngularOffset = 2.0354;
+    public static final double kFrontRightChassisAngularOffset = 1.20;
+    public static final double kBackLeftChassisAngularOffset = 0.9007;
+    public static final double kBackRightChassisAngularOffset = 2.286;
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 13;
@@ -82,7 +82,7 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.1;
+    public static final double kDriveDeadband = 0.15;
   }
 
   public static final class AutoConstants {

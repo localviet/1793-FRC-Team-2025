@@ -21,10 +21,18 @@ public class IntakeSubsystem extends SubsystemBase{
         m_motor.configure(armConfig, ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
     }
     //if rev false, shoot, if rev true, intake
-    public void shoot(boolean rev) {
+    public void shoot(int rev) {
 
-        double value = .5;
-        double motorSpeed = rev ? -value : value;
+
+        double motorSpeed = 0;
+
+        if(rev == 1){
+            motorSpeed = 0.4;
+        } else if(rev == 2){
+            motorSpeed = -0.4;
+        } else {
+            motorSpeed = 0;
+        }
 
         m_motor.set(motorSpeed);
     }

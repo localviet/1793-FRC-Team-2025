@@ -40,7 +40,7 @@ public class BargeSubsystem extends SubsystemBase{
 ;
     private final SparkMaxConfig config = Configs.Barge.bargeConfig;
 
-    private final double maxOffset = -21;
+    private final double maxOffset = -24;
     private final double restOffset = -1;
 
     private boolean clamped = false;

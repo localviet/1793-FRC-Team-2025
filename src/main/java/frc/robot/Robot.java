@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -105,9 +106,15 @@ public class Robot extends TimedRobot {
      */
 
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
+    /*
+     *     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+     */
+    m_DriveSubsystem.drive(.7, 0, 0, false);
+     Timer.delay(2);
+     m_DriveSubsystem.drive(0, 0, 0, false);
+
   }
 
   /** This function is called periodically during autonomous. */
