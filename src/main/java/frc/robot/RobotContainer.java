@@ -55,7 +55,6 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
-  private final BargeSubsystem m_BargeSubsystem = new BargeSubsystem();
   private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
 
@@ -123,8 +122,7 @@ public class RobotContainer {
     new JoystickButton(m_driverController, XboxController.Button.kX.value)
         .onTrue(new InstantCommand(() -> fieldOriented = !fieldOriented));
 
-    new JoystickButton(m_driverController, XboxController.Button.kY.value)
-        .onTrue(new InstantCommand(() -> m_BargeSubsystem.toggleClamp()));
+
 
     //grabber mappings
     new JoystickButton(m_grabberController, XboxController.Button.kA.value)
@@ -134,7 +132,7 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> m_elevator.setElevatorHeight(0.0).schedule()));
 
     new JoystickButton(m_grabberController, XboxController.Button.kY.value)
-        .onTrue(new InstantCommand(() -> m_elevator.setElevatorHeight(.6457).schedule()));
+        .onTrue(new InstantCommand(() -> m_elevator.setElevatorHeight(.196).schedule()));
 
     new JoystickButton(m_grabberController, XboxController.Button.kB.value)
         .onTrue(new InstantCommand(() -> m_elevator.setElevatorHeight(0.7186).schedule()));
@@ -205,9 +203,6 @@ new Trigger(() -> m_grabberController.getRightTriggerAxis() < 0.2 && m_grabberCo
     return m_elevator;
   }
 
-  public BargeSubsystem getBargeSubsystem() {
-    return m_BargeSubsystem;
-  }
 
   public ArmSubsystem getArmSubsystem() {
     return m_ArmSubsystem;

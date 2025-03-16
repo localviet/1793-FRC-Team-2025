@@ -71,13 +71,21 @@ public class ElevatorSubsystem extends SubsystemBase {
         double output = kP * error;
     
         // Feedforward for gravity/friction compensation, thats it
-        double feedForwardVolts = m_feedForward.calculateWithVelocities(getVelocityMetersPerSecond(), 0);
-        
+        //double feedForwardVolts = m_feedForward.calculateWithVelocities(getVelocityMetersPerSecond(), 0); //+1?
+        double feedForwardVolts = 1;
         // Combine control output and feedforward, then clamp voltage
-        double voltsOutput = MathUtil.clamp(output + feedForwardVolts, -12, 12);
-        
-        m_motor.setVoltage(voltsOutput);
+        double voltsOutput = MathUtil.clamp(output + feedForwardVolts, -3, 3);
 
+        m_motor.setVoltage(voltsOutput);
+        
+        /*
+        if (Math.abs(error) < ElevatorConstants.kElevatorDefaultTolerance) {
+            //m_motor.setVoltage(feedForwardVolts); // Stop motorj
+            m_motor.set(0.0);
+        } else {
+            m_motor.setVoltage(voltsOutput); 
+        }
+*/
     }
     
 
@@ -86,7 +94,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public Command setElevatorHeight(double height){
-        return setGoal(height).until(()->aroundHeight(height));
+        //return setGoal(height).until(()->aroundHeight(height));
+        return setGoal(height);
     }
 
     public boolean aroundHeight(double height){

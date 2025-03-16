@@ -23,6 +23,15 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard; 
 import edu.wpi.first.wpilibj.Encoder;
 
+import edu.wpi.first.cameraserver.CameraServer;  // For streaming camera feed
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoSink;
+
+import org.opencv.core.*;                        // OpenCV Core functions
+import org.opencv.imgproc.Imgproc;               // OpenCV Image Processing
+import org.opencv.videoio.VideoCapture;          // OpenCV Camera Capture
+import org.opencv.videoio.Videoio;               // OpenCV Video Settings
+
 
 
 /**
@@ -38,7 +47,6 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_RobotContainer = new RobotContainer();
   private DriveSubsystem m_DriveSubsystem = m_RobotContainer.getDriveSysten();
-  private BargeSubsystem m_BargeSubsystem = m_RobotContainer.getBargeSubsystem();
   private ArmSubsystem m_ArmSubsystem = m_RobotContainer.getArmSubsystem();
 
   private ElevatorSubsystem m_ElevatorSubsystem = m_RobotContainer.getElevatorSubsystem();
@@ -55,15 +63,28 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
+
+        UsbCamera camera = CameraServer.startAutomaticCapture();
+        camera.setResolution(320, 240);
+        camera.setFPS(15);
+
+        // Force camera stream to start
+        VideoSink server = CameraServer.getServer();
+        server.setSource(camera);
+
+       
     
 
     tab.addNumber("Front Left Encoder", () -> m_DriveSubsystem.getFrontLeftEncoder());
     tab.addNumber("Front Right Encoder", () -> m_DriveSubsystem.getFrontRightEncoder());
     tab.addNumber("Back Left Encoder", () -> m_DriveSubsystem.getBackLeftEncoder());
     tab.addNumber("Back Right Encoder", () -> m_DriveSubsystem.getBackRightEncoder());
-    tab.addNumber("Barge Encoder", () -> m_BargeSubsystem.getEncoderVal());
+    tab.addNumber("ARM angle", () -> m_ArmSubsystem.getArmAngle());
     tab.addNumber("ARM Encoder", () -> m_ArmSubsystem.getEncoderVal());
     tab.addNumber("Right X value", () -> controller.getRightX());
+
+    tab.add("camera feed", camera).withWidget("Camera Stream").withSize(4, 3)
+    .withPosition(0, 0);
 
     elevatorTab.addNumber("Elevator Height (m)", () -> m_ElevatorSubsystem.getPositionMeters());
     
@@ -111,8 +132,8 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
     }
      */
-    m_DriveSubsystem.drive(.7, 0, 0, false);
-     Timer.delay(2);
+    m_DriveSubsystem.drive(.35, 0, 0, false);
+     Timer.delay(1);
      m_DriveSubsystem.drive(0, 0, 0, false);
 
   }

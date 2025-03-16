@@ -27,9 +27,9 @@ public class IntakeSubsystem extends SubsystemBase{
         double motorSpeed = 0;
 
         if(rev == 1){
-            motorSpeed = 0.4;
+            motorSpeed = 0.3;
         } else if(rev == 2){
-            motorSpeed = -0.4;
+            motorSpeed = -0.3;
         } else {
             motorSpeed = 0;
         }

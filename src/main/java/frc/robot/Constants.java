@@ -45,7 +45,7 @@ public final class Constants {
 
     // Angular offsets of the modules relative to the chassis in radians
     public static final double kFrontLeftChassisAngularOffset = 2.0354;
-    public static final double kFrontRightChassisAngularOffset = 1.20;
+    public static final double kFrontRightChassisAngularOffset = 6.246;
     public static final double kBackLeftChassisAngularOffset = 0.9007;
     public static final double kBackRightChassisAngularOffset = 2.286;
 
@@ -82,7 +82,7 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.15;
+    public static final double kDriveDeadband = 0.2;
   }
 
   public static final class AutoConstants {
@@ -124,7 +124,7 @@ public final class Constants {
     public static final Distance kElevatorStartingHeightSim = Meters.of(0.0);
     public static final Angle kElevatorStartingAngle = Degrees.of(-90);
     public static final Distance kLaserCANOffset  = Inches.of(3);
-    public static final double kElevatorDefaultTolerance = Inches.of(1).in(Meters);
+    public static final double kElevatorDefaultTolerance = Inches.of(2).in(Meters);
 
     public static double kLowerToScoreHeight =  Units.inchesToMeters(6);;
   }

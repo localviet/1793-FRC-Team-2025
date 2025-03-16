@@ -68,7 +68,7 @@ public final class Configs {
             elevatorConfig.closedLoop
                     .pid(ElevatorConstants.kElevatorKp, ElevatorConstants.kElevatorKi, ElevatorConstants.kElevatorKd)
                     .velocityFF(ElevatorConstants.kElevatorkG) // Feedforward term
-                    .outputRange(-8, 8);
+                    .outputRange(-10, 10);
         }
     }
 
@@ -97,7 +97,7 @@ public final class Configs {
                         .smartCurrentLimit(40)
                         .openLoopRampRate(ElevatorConstants.kElevatorRampRate);
                 armConfig.closedLoop
-                        .pid(.5, 0, 0)
+                        .pid(1, 0, 0)
                         .velocityFF(ElevatorConstants.kElevatorkG) // Feedforward term
                         .outputRange(-12, 12);
         }
